@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getAvailability } from "@/lib/availability";
 import { calendarErrorPayload, createCalendarEvent } from "@/lib/google-calendar";
 import { getMeeting } from "@/lib/meetings";
+import { sendOwnerBookingNotification } from "@/lib/owner-notification";
 import { slotIsAvailable } from "@/lib/time";
 import { bookingRequestSchema } from "@/lib/validation";
 
@@ -51,9 +52,19 @@ export async function POST(request: Request) {
       attendee: details,
       timeZone
     });
+    const ownerNotification = await sendOwnerBookingNotification({
+      meetingTitle: meeting.title,
+      start,
+      end,
+      attendee: details,
+      timeZone,
+      calendarHtmlLink: event.htmlLink,
+      meetLink: event.hangoutLink
+    });
 
     const response = NextResponse.json({
       ok: true,
+      ownerNotification,
       receipt: {
         meetingTitle: meeting.title,
         durationMinutes: meeting.durationMinutes,
