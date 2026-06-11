@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: BookingPageProps): Promise<Me
       type: "website",
       images: [
         {
-          url: `/booking/${booking.token}/opengraph-image`,
+          url: "/booking-og.png",
           width: 1200,
           height: 630,
           alt: title
@@ -65,7 +65,7 @@ export async function generateMetadata({ params }: BookingPageProps): Promise<Me
       card: "summary_large_image",
       title,
       description,
-      images: [`/booking/${booking.token}/opengraph-image`]
+      images: ["/booking-og.png"]
     }
   };
 }
