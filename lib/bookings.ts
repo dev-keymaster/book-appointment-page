@@ -3,6 +3,8 @@ import type { BookingDetails } from "@/lib/validation";
 
 export type BookingRecord = {
   token: string;
+  status: "confirmed" | "canceled";
+  googleEventId: string | null;
   meetingTitle: string;
   durationMinutes: number;
   startAt: string;
@@ -26,6 +28,7 @@ type CreateBookingRecordInput = {
   timeZone: string;
   meetLink?: string | null;
   calendarHtmlLink?: string | null;
+  googleEventId?: string | null;
   attendee: BookingDetails;
 };
 
@@ -40,6 +43,8 @@ function bookingToken() {
 function rowToBooking(row: Record<string, unknown>): BookingRecord {
   return {
     token: String(row.token),
+    status: row.status === "canceled" ? "canceled" : "confirmed",
+    googleEventId: row.google_event_id ? String(row.google_event_id) : null,
     meetingTitle: String(row.meeting_title),
     durationMinutes: Number(row.duration_minutes),
     startAt: new Date(String(row.start_at)).toISOString(),
@@ -67,6 +72,8 @@ export async function createBookingRecord(input: CreateBookingRecordInput): Prom
   const rows = await sql`
     insert into bookings (
       token,
+      status,
+      google_event_id,
       meeting_title,
       duration_minutes,
       start_at,
@@ -82,6 +89,8 @@ export async function createBookingRecord(input: CreateBookingRecordInput): Prom
     )
     values (
       ${bookingToken()},
+      ${"confirmed"},
+      ${input.googleEventId ?? null},
       ${input.meetingTitle},
       ${input.durationMinutes},
       ${input.start.toISOString()},
@@ -95,6 +104,24 @@ export async function createBookingRecord(input: CreateBookingRecordInput): Prom
       ${input.attendee.linkedin || null},
       ${input.attendee.message || null}
     )
+    returning *
+  `;
+
+  return rows[0] ? rowToBooking(rows[0] as Record<string, unknown>) : null;
+}
+
+export async function markBookingCanceled(token: string): Promise<BookingRecord | null> {
+  const url = databaseUrl();
+
+  if (!url || !/^[a-f0-9]{24}$/i.test(token)) {
+    return null;
+  }
+
+  const sql = neon(url);
+  const rows = await sql`
+    update bookings
+    set status = ${"canceled"}
+    where token = ${token}
     returning *
   `;
 

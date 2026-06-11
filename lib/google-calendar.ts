@@ -128,6 +128,28 @@ export async function getBusyBlocks({ start, end }: { start: Date; end: Date }):
   }
 }
 
+export async function getCalendarEventStatus(eventId: string): Promise<calendar_v3.Schema$Event["status"] | null> {
+  const calendar = calendarClient();
+  const calendarId = requiredEnv("GOOGLE_CALENDAR_ID");
+
+  try {
+    const response = await calendar.events.get({
+      calendarId,
+      eventId
+    });
+
+    return response.data.status ?? null;
+  } catch (error) {
+    const calendarError = toCalendarError(error, "Google Calendar event lookup failed.");
+
+    if (calendarError.status === 404) {
+      return "cancelled";
+    }
+
+    throw calendarError;
+  }
+}
+
 export async function createCalendarEvent({
   title,
   description,

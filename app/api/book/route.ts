@@ -72,6 +72,7 @@ export async function POST(request: Request) {
         end,
         attendee: details,
         timeZone,
+        googleEventId: event.id,
         calendarHtmlLink: event.htmlLink,
         meetLink: event.hangoutLink
       });
