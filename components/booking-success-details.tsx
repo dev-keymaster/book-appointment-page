@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { CopyMeetLinkButton } from "@/components/copy-meet-link-button";
 
 type BookingReceipt = {
   meetingTitle: string;
@@ -88,9 +89,10 @@ export function BookingSuccessDetails() {
       `${receipt.meetingTitle} with Igor Kliuchnik`,
       `${formatDateTime(receipt.start, receipt.end, receipt.timeZone)} ${receipt.timeZone}`,
       "",
+      receipt.shareUrl ? `View details\n${receipt.shareUrl}` : null,
+      receipt.shareUrl ? "" : null,
       receipt.meetLink ? `Google Meet:\n${receipt.meetLink}` : null,
       receipt.calendarHtmlLink ? `Calendar:\n${receipt.calendarHtmlLink}` : null,
-      receipt.shareUrl ? `View details\n${receipt.shareUrl}` : null
     ]
       .filter(Boolean)
       .join("\n\n");
@@ -209,7 +211,10 @@ export function BookingSuccessDetails() {
         {receipt.meetLink ? (
           <div className="rounded-lg border border-border bg-background/35 px-4 py-3">
             <dt className="text-sm font-bold text-slate-400">Google Meet</dt>
-            <dd className="mt-1 break-words font-semibold text-blue-200">{receipt.meetLink}</dd>
+            <dd className="mt-2 flex items-center gap-3">
+              <span className="min-w-0 flex-1 break-words font-semibold text-blue-200">{receipt.meetLink}</span>
+              <CopyMeetLinkButton value={receipt.meetLink} />
+            </dd>
           </div>
         ) : null}
       </dl>

@@ -43,9 +43,10 @@ export function BookingShareActions({ booking }: { booking: BookingRecord }) {
         `${booking.meetingTitle} with Igor Kliuchnik`,
         `${formatDateTime(booking.startAt, booking.endAt, booking.timeZone)} ${booking.timeZone}`,
         "",
+        shareUrl ? `View details\n${shareUrl}` : null,
+        shareUrl ? "" : null,
         booking.meetLink ? `Google Meet:\n${booking.meetLink}` : null,
         booking.calendarHtmlLink ? `Calendar:\n${booking.calendarHtmlLink}` : null,
-        shareUrl ? `View details\n${shareUrl}` : null
       ]
         .filter(Boolean)
         .join("\n\n"),
