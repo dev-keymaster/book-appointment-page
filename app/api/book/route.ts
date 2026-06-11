@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAvailability } from "@/lib/availability";
+import { createBookingRecord } from "@/lib/bookings";
 import { calendarErrorPayload, createCalendarEvent } from "@/lib/google-calendar";
 import { getMeeting } from "@/lib/meetings";
 import { sendOwnerBookingNotification } from "@/lib/owner-notification";
@@ -61,6 +62,28 @@ export async function POST(request: Request) {
       calendarHtmlLink: event.htmlLink,
       meetLink: event.hangoutLink
     });
+    let shareUrl: string | undefined;
+
+    try {
+      const booking = await createBookingRecord({
+        meetingTitle: meeting.title,
+        durationMinutes: meeting.durationMinutes,
+        start,
+        end,
+        attendee: details,
+        timeZone,
+        calendarHtmlLink: event.htmlLink,
+        meetLink: event.hangoutLink
+      });
+
+      if (booking) {
+        shareUrl = new URL(`/booking/${booking.token}`, request.url).toString();
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Booking persistence failed.";
+
+      console.error("Booking persistence failed", { message });
+    }
 
     const response = NextResponse.json({
       ok: true,
@@ -71,6 +94,7 @@ export async function POST(request: Request) {
         start: start.toISOString(),
         end: end.toISOString(),
         timeZone,
+        shareUrl,
         calendarHtmlLink: event.htmlLink,
         meetLink: event.hangoutLink,
         attendeeStatus: event.attendees?.find((attendee) => attendee.email === details.email)?.responseStatus
