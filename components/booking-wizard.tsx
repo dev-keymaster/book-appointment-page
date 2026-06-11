@@ -512,6 +512,39 @@ export function BookingWizard({ meeting }: { meeting: MeetingDefinition }) {
                   timeFormat={timeFormat}
                 />
               ) : null}
+
+              <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+                {step > 0 ? (
+                  <button
+                    type="button"
+                    onClick={goBack}
+                    disabled={isSubmitting}
+                    className="rounded-lg border border-border px-4 py-3 font-bold text-slate-300 outline-none transition hover:border-primaryHover hover:text-white focus-visible:ring-2 focus-visible:ring-primaryHover disabled:pointer-events-none disabled:opacity-40"
+                  >
+                    Back
+                  </button>
+                ) : null}
+
+                {step < 2 ? null : step === 2 ? (
+                  <button
+                    type="button"
+                    onClick={continueFromDetails}
+                    disabled={isSubmitting}
+                    className="rounded-lg bg-primary px-5 py-3 font-extrabold text-white outline-none transition hover:bg-primaryHover focus-visible:ring-2 focus-visible:ring-primaryHover disabled:pointer-events-none disabled:opacity-45"
+                  >
+                    Continue
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => void bookMeeting()}
+                    disabled={isSubmitting}
+                    className="rounded-lg bg-primary px-5 py-3 font-extrabold text-white outline-none transition hover:bg-primaryHover focus-visible:ring-2 focus-visible:ring-primaryHover disabled:pointer-events-none disabled:opacity-50"
+                  >
+                    {isSubmitting ? "Booking..." : "Book Meeting"}
+                  </button>
+                )}
+              </div>
             </motion.div>
           </AnimatePresence>
 
@@ -520,39 +553,6 @@ export function BookingWizard({ meeting }: { meeting: MeetingDefinition }) {
               {submitError}
             </p>
           ) : null}
-
-          <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
-            {step > 0 ? (
-              <button
-                type="button"
-                onClick={goBack}
-                disabled={isSubmitting}
-                className="rounded-lg border border-border px-4 py-3 font-bold text-slate-300 outline-none transition hover:border-primaryHover hover:text-white focus-visible:ring-2 focus-visible:ring-primaryHover disabled:pointer-events-none disabled:opacity-40"
-              >
-                Back
-              </button>
-            ) : null}
-
-            {step < 2 ? null : step === 2 ? (
-              <button
-                type="button"
-                onClick={continueFromDetails}
-                disabled={isSubmitting}
-                className="rounded-lg bg-primary px-5 py-3 font-extrabold text-white outline-none transition hover:bg-primaryHover focus-visible:ring-2 focus-visible:ring-primaryHover disabled:pointer-events-none disabled:opacity-45"
-              >
-                Continue
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => void bookMeeting()}
-                disabled={isSubmitting}
-                className="rounded-lg bg-primary px-5 py-3 font-extrabold text-white outline-none transition hover:bg-primaryHover focus-visible:ring-2 focus-visible:ring-primaryHover disabled:pointer-events-none disabled:opacity-50"
-              >
-                {isSubmitting ? "Booking..." : "Book Meeting"}
-              </button>
-            )}
-          </div>
         </div>
       </section>
     </main>
