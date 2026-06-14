@@ -9,6 +9,7 @@ type OwnerNotificationInput = {
   attendee: BookingDetails;
   meetLink?: string | null;
   calendarHtmlLink?: string | null;
+  bookingDetailsLink?: string | null;
 };
 
 type OwnerNotificationResult =
@@ -78,7 +79,8 @@ function buildEmail(input: OwnerNotificationInput, ownerEmail: string) {
     input.attendee.message ? `Message: ${input.attendee.message}` : null,
     "",
     input.meetLink ? `Google Meet: ${input.meetLink}` : null,
-    input.calendarHtmlLink ? `Calendar event: ${input.calendarHtmlLink}` : null
+    input.calendarHtmlLink ? `Calendar event: ${input.calendarHtmlLink}` : null,
+    input.bookingDetailsLink ? `Booking details: ${input.bookingDetailsLink}` : null
   ].filter(Boolean);
 
   return [

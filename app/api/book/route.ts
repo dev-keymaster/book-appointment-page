@@ -53,15 +53,6 @@ export async function POST(request: Request) {
       attendee: details,
       timeZone
     });
-    const ownerNotification = await sendOwnerBookingNotification({
-      meetingTitle: meeting.title,
-      start,
-      end,
-      attendee: details,
-      timeZone,
-      calendarHtmlLink: event.htmlLink,
-      meetLink: event.hangoutLink
-    });
     let shareUrl: string | undefined;
 
     try {
@@ -85,6 +76,16 @@ export async function POST(request: Request) {
 
       console.error("Booking persistence failed", { message });
     }
+    const ownerNotification = await sendOwnerBookingNotification({
+      meetingTitle: meeting.title,
+      start,
+      end,
+      attendee: details,
+      timeZone,
+      calendarHtmlLink: event.htmlLink,
+      meetLink: event.hangoutLink,
+      bookingDetailsLink: shareUrl
+    });
 
     const response = NextResponse.json({
       ok: true,
